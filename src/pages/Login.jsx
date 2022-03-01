@@ -1,7 +1,7 @@
 import { Box, Button, FormControlLabel, FormGroup, Switch, TextField, Typography } from '@mui/material'
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, Navigate} from 'react-router-dom'
 import {doLogin} from '../redux/actions/userAction'
 
 const style = {
@@ -23,17 +23,20 @@ function Login() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const dispatch = useDispatch();
+    const user = useSelector(state => state.user)
     
     const onLogin = () => {
         let data = {
             email: email,
             password: password
         }
-        console.log('data:',data);
-        console.log('tes');
+        // console.log('data:',data);
+        console.log('user', user);
         dispatch(doLogin(data))
+        
+        localStorage.setItem('my-tkn', user.data)
+        
     }
-
     return (
         <div>
             <div className="container my-2">
@@ -53,7 +56,7 @@ function Login() {
                                 </h2>
                             </div>
                             <div className="d-flex justify-content-center">
-                                <TextField id="outlined-basic" label="Email" variant="outlined" type="text" className="my-3" onChange={(e) => setEmail(e.target.value)}/>
+                                <TextField id="outlined-basic" label="Email" variant="outlined" type="text" className="my-3" value={email} onChange={(e) => setEmail(e.target.value)}/>
                             </div>
                             <div className="d-flex justify-content-center">
                                 <TextField id="outlined-basic" label="Password" variant="outlined" type="password" onChange={(e) => setPassword(e.target.value)} />
@@ -67,9 +70,14 @@ function Login() {
                                 <p className="my-2">Don't have an account? <Link to="/register">Sign up</Link></p>
                             </div>
                             <div className="d-flex justify-content-center">
-                                <Button variant="contained" className="my-3 w-50" size="large" onClick={()=>onLogin()}>
+                                <Button variant="contained" className="my-3 w-50" size="large" onClick={onLogin}>
                                     Log in
                                 </Button>
+                            </div>
+                            <div className="d-flex justify-content-center">
+                                <p style={{color: 'red'}}>
+                                    {user.message}
+                                </p>
                             </div>
                         </Box>
                     </div>
